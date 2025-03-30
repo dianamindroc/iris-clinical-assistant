@@ -41,8 +41,8 @@ cd iris-clinical-assistant
 2. Create environment and install requirements
 
 ```code
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+conda create --name intersystemscontest python=3.10
+conda activate intersystemscontest
 pip install -r requirements.txt 
 ```
 
@@ -62,7 +62,7 @@ zpm "install fhir-server"
 
 Now you can exit the container by entering ```HALT```.
 
-5. Additionally, we need to make sure that Admin has SQL privileges. For this, go to [dashboard](http://localhost:52773/csp/sys/UtilHome.csp), go to System Administration -> Security -> Users -> Go, click on Admin and at SQL Admin Privileges, Assign CREATE_TABLE, CREATE_QUERY, CREATE_PROCEDURE.
+5. Additionally, we need to make sure that Admin has SQL privileges. For this, go to [dashboard](http://localhost:52773/csp/sys/UtilHome.csp), go to System Administration -> Security -> Users -> Go, click on Admin and Roles, Assign %All.
 
 6. Install IRIS driver wheel (can be downloaded from [IRIS website](https://intersystems-community.github.io/iris-driver-distribution/), it was already downloaded and placed in the wheels folder)
 

@@ -15,6 +15,21 @@ def setup_routes(app):
     def index():
         return render_template('index.html')
 
+    @app.route('/api/patients', methods=['GET'])
+    def get_patients():
+        from app.functions.iris import get_patient_list
+
+        try:
+            patients = get_patient_list()
+            return jsonify({
+                'patients': patients,
+                'count': len(patients)
+            })
+        except Exception as e:
+            logger.exception("Error retrieving patient list")
+            return jsonify({'error': str(e)}), 500
+
+
     @app.route('/api/query', methods=['POST'])
     def api_query():
         try:
@@ -50,18 +65,3 @@ def setup_routes(app):
     @app.errorhandler(500)
     def server_error(e):
         return render_template('error.html', error=str(e)), 500
-
-    @app.route('/api/patients', methods=['GET'])
-    def get_patients():
-        from app.functions.iris import get_patient_list
-
-        try:
-            patients = get_patient_list()
-            return jsonify({
-                'patients': patients,
-                'count': len(patients)
-            })
-        except Exception as e:
-            logger.exception("Error retrieving patient list")
-            return jsonify({'error': str(e)}), 500
-
