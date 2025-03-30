@@ -1,0 +1,17 @@
+*.log
+*.json
+
+# Ignore PyCharm project files
+.idea/
+
+# macOS system files
+.DS_Store
+
+# Ignore Python cache files
+__pycache__/
+*/__pycache__/
+
+# Ignore build artifacts
+build/
+dist/
+*.egg-info/

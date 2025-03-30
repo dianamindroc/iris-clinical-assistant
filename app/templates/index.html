@@ -1,10 +1,211 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <title>IRIS Clinical Assistant</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        h1 {
+            color: #003366;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .query-container {
+            display: flex;
+            gap: 10px;
+        }
+        #query {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 12px 20px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #0055aa;
+        }
+        .response-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        #response {
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        .sources {
+            margin-top: 15px;
+            font-size: 0.85em;
+            color: #666;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #666;
+        }
+        .error {
+            color: #cc0000;
+            background: #ffeeee;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #cc0000;
+        }
+        .patients-list-container {
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 15px;
+        }
+        .patients-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .patient-badge {
+            background: #e6f2ff;
+            color: #0066cc;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .patient-badge:hover {
+            background: #cce5ff;
+        }
+    </style>
 </head>
 <body>
-$END$
+    <h1>IRIS Clinical Assistant</h1>
+    <p>Ask questions about patient conditions, medications, and procedures</p>
+    <div class="container">
+        <div class="query-container">
+            <input type="text" id="query" placeholder="Example: 'What conditions does patient 6 have?' or 'Which patients have hypertension?'">
+            <button onclick="submitQuery()">Ask</button>
+        </div>
+        <div class="patients-list-container">
+            <h3>Available patients</h3>
+            <div id="patients-list" class="patients-liss">Loading patients...</div>
+        </div>
+        <div class="response-container">
+            <div id="response">Enter a question above to get started...</div>
+        </div>
+    </div>
+
+    <script>
+        async function submitQuery() {
+            const query = document.getElementById('query').value;
+            if (!query) return;
+
+            const responseEl = document.getElementById('response');
+            responseEl.innerHTML = "<div class='loading'>Processing your query...</div>";
+
+            try {
+                const response = await fetch('/api/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Extract the main response and sources from the response
+                    const mainResponse = data.response.split('Sources:')[0].trim();
+                    const sources = data.sources || [];
+
+                    // Format the response with sources
+                    let html = `<div>${mainResponse}</div>`;
+
+                    if (sources.length > 0) {
+                        html += `<div class="sources">
+                            <strong>Sources:</strong>
+                            ${sources.map(s => `Patient ${s.patient_id} (relevance: ${s.score})`).join(', ')}
+                        </div>`;
+                    }
+
+                    responseEl.innerHTML = html;
+                } else {
+                    responseEl.innerHTML = `<div class="error">Error: ${data.error || 'Unknown error'}</div>`;
+                }
+            } catch (error) {
+                responseEl.innerHTML = `<div class="error">Error connecting to server: ${error}</div>`;
+            }
+        }
+
+        // Allow pressing Enter to submit
+        document.getElementById('query').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                submitQuery();
+            }
+        });
+
+        // Load patients list on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadPatientsList();
+        });
+
+        async function loadPatientsList() {
+            try {
+                const response = await fetch('/api/patients');
+                const data = await response.json();
+
+                if (response.ok) {
+                    const patientsListEl = document.getElementById('patients-list');
+
+                    if (data.patients && data.patients.length > 0) {
+                        // Create patient badges
+                        const patientBadges = data.patients.map(patientId =>
+                            `<div class="patient-badge" onclick="selectPatient('${patientId}')">Patient ${patientId}</div>`
+                        ).join('');
+
+                        patientsListEl.innerHTML = patientBadges;
+                    } else {
+                        patientsListEl.innerHTML = 'No patients found in the database.';
+                    }
+                } else {
+                    document.getElementById('patients-list').innerHTML =
+                        `<div class="error">Error loading patients: ${data.error || 'Unknown error'}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('patients-list').innerHTML =
+                    `<div class="error">Error connecting to server: ${error}</div>`;
+            }
+        }
+
+        function selectPatient(patientId) {
+            // Add patient ID to query input
+            const queryInput = document.getElementById('query');
+            queryInput.value = `What conditions does Patient ${patientId} have?`;
+            queryInput.focus();
+        }
+    </script>
 </body>
 </html>
