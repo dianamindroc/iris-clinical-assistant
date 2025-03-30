@@ -12,7 +12,7 @@ The solution follows a Retrieval Augmented Generation (RAG) architecture:
 
 1. **Data Pipeline**:
    * Fetches FHIR resources (Conditions, Medications, Procedures)
-   * Generates comprehensive patient summaries
+   * Generates patient summaries
    * Creates vector embeddings using sentence-transformers
 2. **Storage Layer**:
    * Stores embeddings in IRIS database
@@ -77,4 +77,4 @@ pip install intersystems_irispython-3.2.0-py3-none-any.whl
 cd ..
 python -m app.app
 ```
-9. Access [localhost:5000](https://localhost:5000) and interact with the app
+9. Access [localhost:5000](http://localhost:5000) and interact with the app
