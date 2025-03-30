@@ -48,16 +48,16 @@ zpm "install fhir-server"
 
 Now you can exit the container by entering ```HALT```. 
 
-4. Additionally, we need to make sure that Admin has SQL privileges. For this, go to [dashboard](http://localhost:52773/csp/sys/UtilHome.csp), go to System Administration -> Security -> Users -> Go, click on Admin and at SQL Admin Privileges, Assign CREATE_TABLE, CREATE_QUERY, CREATE_PROCEDURE.
-5. 
-6. Clone the repository
+3. Additionally, we need to make sure that Admin has SQL privileges. For this, go to [dashboard](http://localhost:52773/csp/sys/UtilHome.csp), go to System Administration -> Security -> Users -> Go, click on Admin and at SQL Admin Privileges, Assign CREATE_TABLE, CREATE_QUERY, CREATE_PROCEDURE.
+   
+4. Clone the repository
 
 ```git
 git clone 
 cd iris-clinical-assistant
 ```
 
-4. Create environment and install requirements
+5. Create environment and install requirements
 
 ```env
 python -m venv venv
@@ -65,14 +65,16 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt 
 ```
 
-5. Install IRIS driver wheel (can be downloaded from [IRIS website](https://intersystems-community.github.io/iris-driver-distribution/), it was already downloaded and placed in the wheels folder)
+6. Install IRIS driver wheel (can be downloaded from [IRIS website](https://intersystems-community.github.io/iris-driver-distribution/), it was already downloaded and placed in the wheels folder)
 
 ```wheel
 cd wheels
 pip install intersystems_irispython-3.2.0-py3-none-any.whl
 ```
 
-6. Run app
+7. In ```.env```, make sure to update IRIS username, password, namespace and add a HuggingFace token for LLM inference. 
+
+8. Run app
 
 ```code
 cd ..
