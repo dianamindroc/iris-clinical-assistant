@@ -29,16 +29,30 @@ The solution follows a Retrieval Augmented Generation (RAG) architecture:
 * Hugging Face API token (for LLM access)
 * **Note:** The InterSystems IRIS DB-API package is required for Python applications to connect to IRIS databases. This package is not available on PyPI and must be downloaded from the InterSystems distribution repository. For convenience, the package was already downloaded and placed in the wheels folder for this application.
 
-
 ## Installation
 
-1. Start InterSystems IRIS for Health (you can use the provided docker-compose.yml)
+1. Clone repository
+
+```git
+git clone https://github.com/dianamindroc/iris-clinical-assistant.git
+cd iris-clinical-assistant
+```
+
+2. Create environment and install requirements
+
+```code
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt 
+```
+
+3. Start InterSystems IRIS for Health (you can use the provided docker-compose.yml)
 
 ```docker
 docker-compose up -d
 ```
 
-2. The FHIR server needs to be installed inside the container:
+4. The FHIR server needs to be installed inside the container:
 
 ```docker
 docker exec -it <container_name> iris session iris
@@ -46,24 +60,9 @@ zn "<namespace>"
 zpm "install fhir-server"
 ```
 
-Now you can exit the container by entering ```HALT```. 
+Now you can exit the container by entering ```HALT```.
 
-3. Additionally, we need to make sure that Admin has SQL privileges. For this, go to [dashboard](http://localhost:52773/csp/sys/UtilHome.csp), go to System Administration -> Security -> Users -> Go, click on Admin and at SQL Admin Privileges, Assign CREATE_TABLE, CREATE_QUERY, CREATE_PROCEDURE.
-   
-4. Clone the repository
-
-```git
-git clone 
-cd iris-clinical-assistant
-```
-
-5. Create environment and install requirements
-
-```env
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt 
-```
+5. Additionally, we need to make sure that Admin has SQL privileges. For this, go to [dashboard](http://localhost:52773/csp/sys/UtilHome.csp), go to System Administration -> Security -> Users -> Go, click on Admin and at SQL Admin Privileges, Assign CREATE_TABLE, CREATE_QUERY, CREATE_PROCEDURE.
 
 6. Install IRIS driver wheel (can be downloaded from [IRIS website](https://intersystems-community.github.io/iris-driver-distribution/), it was already downloaded and placed in the wheels folder)
 
@@ -71,14 +70,11 @@ pip install -r requirements.txt
 cd wheels
 pip install intersystems_irispython-3.2.0-py3-none-any.whl
 ```
-
-7. In ```.env```, make sure to update IRIS username, password, namespace and add a HuggingFace token for LLM inference. 
-
+7. In ```.env```, make sure to update IRIS username, password, namespace and add a HuggingFace token for LLM inference.
 8. Run app
 
 ```code
 cd ..
 python -m app.app
 ```
-
 9. Access [localhost:5000](https://localhost:5000) and interact with the app
