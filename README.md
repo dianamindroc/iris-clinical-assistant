@@ -81,4 +81,4 @@ cd ..
 python -m app.app
 ```
 
-7. Access [localhost:5000](https://localhost:5000) and interact with the app
+9. Access [localhost:5000](https://localhost:5000) and interact with the app
