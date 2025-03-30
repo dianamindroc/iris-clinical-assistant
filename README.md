@@ -29,9 +29,6 @@ The solution follows a Retrieval Augmented Generation (RAG) architecture:
 * Hugging Face API token (for LLM access)
 * **Note:** The InterSystems IRIS DB-API package is required for Python applications to connect to IRIS databases. This package is not available on PyPI and must be downloaded from the InterSystems distribution repository. For convenience, the package was already downloaded and placed in the wheels folder for this application.
 
-Install IRIS driver package DB-API
-
-https://intersystems-community.github.io/iris-driver-distribution/
 
 ## Installation
 
@@ -49,10 +46,11 @@ zn "<namespace>"
 zpm "install fhir-server"
 ```
 
-Now you can exit the container. 
+Now you can exit the container by entering ```HALT```. 
 
 4. Additionally, we need to make sure that Admin has SQL privileges. For this, go to [dashboard](http://localhost:52773/csp/sys/UtilHome.csp), go to System Administration -> Security -> Users -> Go, click on Admin and at SQL Admin Privileges, Assign CREATE_TABLE, CREATE_QUERY, CREATE_PROCEDURE.
-5. Clone the repository
+5. 
+6. Clone the repository
 
 ```git
 git clone 
